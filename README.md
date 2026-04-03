@@ -66,10 +66,4 @@ The training script automatically detects CUDA and saves record files for analys
 * `Res_UCN_ES_Record.pt`: Stores Energy and Entropy metrics for visualization.
 
 ---
-
-## 📜 License
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
-
----
-**Author:** Wilbert Andrew Yonathan  
-**Specialization:** AI Engineering & Computer Vision
+**Author:** Wilbert Andrew Yonathan, Chua Kian Hoong, Edward Ooi Wee Xue, Derol Chong Chung Kit, Wang Xinyi, Siah Jieh Sheng  
