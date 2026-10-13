@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: resucn-research-lab
+    runtime: static
+    buildCommand: echo 'Res_UCN static site: no build required'
+    staticPublishPath: ./

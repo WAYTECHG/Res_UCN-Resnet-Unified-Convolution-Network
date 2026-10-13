@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#080e1b" />
+  <meta name="description" content="Explore Res_UCN, a research-oriented CIFAR-10 network, and experiment with the Quinsh activation function designed by Wilbert Andrew Yonathan." />
+  <meta property="og:title" content="Res_UCN — Interactive Research Lab" />
+  <meta property="og:description" content="An interactive visual research exhibit for the Res_UCN group project and the Quinsh activation function." />
+  <title>Res_UCN — Interactive Research Lab</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="site-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+      <a href="#home" class="brand" aria-label="Res UCN home"><span class="brand-mark">R<span class="brand-mark-dot">.</span></span><span class="brand-words"><strong>Res_UCN</strong><small>RESEARCH LAB / 2025</small></span></a>
+      <div class="sidebar-divider"></div>
+      <p class="sidebar-label">EXPLORE</p>
+      <nav class="side-nav">
+        <a href="#home" class="nav-link active" data-nav="home"><span class="nav-icon">⌂</span><span>Overview</span><span class="nav-index">01</span></a>
+        <a href="#architecture" class="nav-link" data-nav="architecture"><span class="nav-icon">▦</span><span>Architecture</span><span class="nav-index">02</span></a>
+        <a href="#quinsh" class="nav-link" data-nav="quinsh"><span class="nav-icon">∿</span><span>Quinsh Studio</span><span class="nav-index">03</span></a>
+        <a href="#modules" class="nav-link" data-nav="modules"><span class="nav-icon">◇</span><span>Five modules</span><span class="nav-index">04</span></a>
+        <a href="#results" class="nav-link" data-nav="results"><span class="nav-icon">▤</span><span>Results</span><span class="nav-index">05</span></a>
+        <a href="#inference" class="nav-link" data-nav="inference"><span class="nav-icon">◎</span><span>Model Runner</span><span class="nav-index">06</span></a>
+        <a href="#credits" class="nav-link" data-nav="credits"><span class="nav-icon">↗</span><span>Credits & scope</span><span class="nav-index">07</span></a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="small-status"><span class="status-pulse"></span> Static • browser-based</div>
+        <a class="sidebar-source" href="https://github.com/WAYTECHG/Res_UCN-Resnet-Unified-Convolution-Network" target="_blank" rel="noopener noreferrer">View original GitHub <span>↗</span></a>
+      </div>
+    </aside>
+
+    <div class="main-column">
+      <header class="topbar">
+        <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+        <span class="crumb"><span class="crumb-muted">RESEARCH /</span> RESNET UNIFIED CONVOLUTIONAL NETWORK</span>
+        <div class="top-right"><span class="top-indicator"><span></span> Interactive showcase</span><a href="https://github.com/WAYTECHG/Res_UCN-Resnet-Unified-Convolution-Network" target="_blank" rel="noopener noreferrer" class="top-github">GITHUB ↗</a></div>
+      </header>
+
+      <main id="main">
+        <section id="home" class="section hero-section" data-section>
+          <div class="hero-copy fade-in">
+            <div class="eyebrow"><span class="eyebrow-square"></span> AIT301 / GROUP RESEARCH / CIFAR-10</div>
+            <h1><span class="hero-line">Rethinking the</span><span class="hero-line gradient-text">residual network<span class="period">.</span></span></h1>
+            <p class="hero-lead">Five experimental mechanisms. One lightweight residual architecture. Explore how Res_UCN combines adaptive convolutions, channel-aware normalization and the <strong>Quinsh activation</strong> to investigate efficient image classification.</p>
+            <div class="hero-buttons"><a class="btn btn-primary" href="#quinsh">Explore Quinsh <span>↗</span></a><a class="btn btn-secondary" href="#architecture">Inspect architecture <span>↗</span></a></div>
+            <p class="hero-disclaimer"><span>✦</span> A visual research exhibit, not a claim of separately validated component improvements.</p>
+          </div>
+          <div class="hero-visual fade-in" aria-label="Conceptual illustration of residual feature flow">
+            <div class="visual-head"><span>FIG 01 / RESIDUAL SIGNAL FLOW</span><span class="live-pill"><i></i> VISUAL MODEL</span></div>
+            <svg class="hero-svg" viewBox="0 0 520 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram showing input feature, custom convolution, weighted batch normalization, Quinsh activation, and residual connection">
+              <defs><linearGradient id="linegrad" x1="0" x2="1"><stop stop-color="#23D5CA"/><stop offset="1" stop-color="#9C83FF"/></linearGradient><linearGradient id="heroBox" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#20334d"/><stop offset="1" stop-color="#172138"/></linearGradient><filter id="shadow"><feGaussianBlur stdDeviation="11"/></filter></defs>
+              <g opacity=".14" stroke="#85a7b9"><path d="M0 60H520 M0 110H520 M0 160H520 M0 210H520 M0 260H520 M0 310H520 M0 360H520 M60 0V440 M110 0V440 M160 0V440 M210 0V440 M260 0V440 M310 0V440 M360 0V440 M410 0V440 M460 0V440"/></g>
+              <path d="M85 73 V342 H239" stroke="url(#linegrad)" fill="none" stroke-width="3" stroke-dasharray="7 7" opacity=".7"/>
+              <path d="M239 72 V115 M239 182 V221 M239 284 V327" stroke="url(#linegrad)" fill="none" stroke-width="3" stroke-linecap="round"/>
+              <rect x="138" y="27" width="202" height="50" rx="15" fill="#1b3341" stroke="#396678"/>
+              <text x="239" y="56" text-anchor="middle" fill="#e9fbf8" font-size="16" font-weight="650">Input features  x</text>
+              <rect x="138" y="116" width="202" height="64" rx="15" fill="url(#heroBox)" stroke="#3d5c7b"/>
+              <text x="239" y="141" text-anchor="middle" fill="#79e4d9" font-size="12" font-weight="700">FEATURE EXTRACTION</text>
+              <text x="239" y="161" text-anchor="middle" fill="#edf7ff" font-size="14">ADSGC / CIAC</text>
+              <rect x="138" y="222" width="202" height="62" rx="15" fill="url(#heroBox)" stroke="#3d5c7b"/>
+              <text x="239" y="247" text-anchor="middle" fill="#c6b3ff" font-size="12" font-weight="700">NORMALIZATION</text>
+              <text x="239" y="267" text-anchor="middle" fill="#edf7ff" font-size="14">Weighted BatchNorm</text>
+              <rect x="138" y="327" width="202" height="64" rx="15" fill="#242744" stroke="#8f79ff" stroke-width="1.6"/>
+              <text x="239" y="353" text-anchor="middle" fill="#c6b3ff" font-size="13" font-weight="800">QUINSH</text>
+              <text x="239" y="373" text-anchor="middle" fill="#edf7ff" font-size="12">Nonlinear + linear path</text>
+              <circle cx="85" cy="342" r="13" fill="#1b2c40" stroke="#69e3d8" stroke-width="2"/><text x="85" y="346" text-anchor="middle" font-size="14" fill="#b3ffed">+</text>
+              <path d="M98 342 H138" stroke="url(#linegrad)" stroke-width="3" fill="none"/>
+              <text x="48" y="206" transform="rotate(-90 48 206)" text-anchor="middle" fill="#a6c6d2" font-size="12">residual / shortcut</text>
+              <g><circle cx="403" cy="173" r="54" fill="#4d3f99" opacity=".15" filter="url(#shadow)"/><path d="M369 180 Q387 112 400 185 T447 163" fill="none" stroke="url(#linegrad)" stroke-width="4" stroke-linecap="round"/><circle cx="400" cy="185" r="4" fill="#81f3db"/><text x="407" y="240" text-anchor="middle" fill="#94a7c0" font-size="10" font-weight="700">ACTIVATION CONCEPT</text></g>
+            </svg>
+            <div class="visual-bottom"><span>Architecture visualization • conceptual</span><span class="corner-square"></span></div>
+          </div>
+          <div class="metric-strip">
+            <article class="metric"><span>REPORTED ACCURACY</span><strong>91.45<small>%</small></strong><em>Res_UCN on CIFAR-10</em></article>
+            <article class="metric"><span>REDUCED PARAMETERS</span><strong>~69<small>%</small></strong><em>Versus ResNet-18 baseline</em></article>
+            <article class="metric"><span>TRAINING TIME</span><strong>17:17</strong><em>Minutes : seconds, reported</em></article>
+            <article class="metric"><span>ARCHITECTURAL IDEAS</span><strong>05</strong><em>Novel components, group work</em></article>
+          </div>
+        </section>
+
+        <section id="architecture" class="section" data-section>
+          <div class="section-heading"><div><p class="overline">02 / ARCHITECTURE</p><h2>Inside the <span class="gradient-text">network.</span></h2><p class="section-description">Four residual stages combining different convolution mechanisms, weighted normalization and Quinsh. Select a stage or component to see its purpose.</p></div><span class="section-tag">SCHEMATIC • NOT TO SCALE</span></div>
+          <div class="arch-layout">
+            <div class="panel arch-main">
+              <div class="panel-header"><span><i class="panel-dot"></i> RES_UCN / FEATURE PIPELINE</span><span>CIFAR-10 · 10 CLASSES</span></div>
+              <div class="arch-flow">
+                <div class="arch-input"><div class="mini-grid-art"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span>Input</span><strong>32 × 32 × 3</strong></div>
+                <div class="arch-connector"><span></span>↓</div>
+                <div class="stage-stack" id="stage-stack">
+                  <button class="stage selected" type="button" data-stage="0"><span class="stage-num">01</span><span class="stage-copy"><strong>Residual stage 1</strong><small>ADSGC + CIAC · WBN · Quinsh</small></span><span class="stage-channels">64 CH</span><span class="stage-arrow">↗</span></button>
+                  <button class="stage" type="button" data-stage="1"><span class="stage-num">02</span><span class="stage-copy"><strong>Residual stage 2</strong><small>ADSGC + CIAC · WBN · Quinsh</small></span><span class="stage-channels">128 CH</span><span class="stage-arrow">↗</span></button>
+                  <button class="stage" type="button" data-stage="2"><span class="stage-num">03</span><span class="stage-copy"><strong>Residual stage 3</strong><small>ADSGC + CIAC · WBN · Quinsh</small></span><span class="stage-channels">256 CH</span><span class="stage-arrow">↗</span></button>
+                  <button class="stage" type="button" data-stage="3"><span class="stage-num">04</span><span class="stage-copy"><strong>Residual stage 4</strong><small>ADSGC + CIAC · WBN · Quinsh</small></span><span class="stage-channels">256 CH</span><span class="stage-arrow">↗</span></button>
+                </div>
+                <div class="arch-connector"><span></span>↓</div>
+                <div class="arch-output"><span>GLOBAL AVERAGE POOLING</span><b>Dropout 0.5 <span>→</span> Linear(10)</b><small>Ten CIFAR-10 logits</small></div>
+              </div>
+              <div class="arch-footnote">Stage-channel counts follow the project README. The diagram summarizes the network; it is not a layer-by-layer export of trained weights.</div>
+            </div>
+            <div class="panel arch-inspector" aria-live="polite">
+              <div class="panel-header"><span>STAGE INSPECTOR</span><span>↗</span></div>
+              <span class="inspector-kicker" id="inspector-kicker">STAGE 01 / 04</span>
+              <h3 id="inspector-title">Early feature extraction</h3>
+              <p id="inspector-desc">Processes the first image features using adaptive-scale convolution, channel weighting, weighted normalization and Quinsh activation.</p>
+              <div class="inspector-label">CONCEPTUAL RESIDUAL BLOCK</div>
+              <div class="block-diagram"><div class="block-box">Input x</div><span>↓</span><div class="block-box subtle">ADSGC / CIAC</div><span>↓</span><div class="block-box subtle">Weighted BatchNorm</div><span>↓</span><div class="block-box accent">Quinsh + shortcut</div></div>
+              <div class="info-row"><span>FEATURE CHANNELS</span><strong id="inspector-channels">64</strong></div>
+              <div class="info-row"><span>MODULE FAMILY</span><strong>Residual block</strong></div>
+              <a href="#modules" class="text-link">Understand all five modules ↗</a>
+            </div>
+          </div>
+        </section>
+
+        <section id="quinsh" class="section" data-section>
+          <div class="section-heading"><div><p class="overline">03 / YOUR CONTRIBUTION</p><h2>Meet <span class="gradient-text">Quinsh.</span></h2><p class="section-description">A learnable gated activation with an explicit residual linear path. Change its parameters and observe how the output and gradient behave.</p></div><span class="contribution-pill"><span>✦</span> DEVELOPED BY WILBERT</span></div>
+          <div class="formula-card"><div><span class="formula-eyebrow">THE QUINSH FUNCTION</span><div class="formula" aria-label="Quinsh of x equals gamma times x minus delta times sigmoid of w times x minus delta plus alpha x"><span class="formula-light">Q(x) = </span><span class="f-gamma">γ</span> · (x − <span class="f-delta">δ</span>) · σ(<span class="f-w">w</span> · (x − <span class="f-delta">δ</span>)) + <span class="f-alpha">α</span>x</div></div><span class="formula-label">LEARNABLE / PARAMETRIC</span></div>
+          <div class="studio-layout">
+            <div class="panel chart-panel">
+              <div class="chart-toolbar"><div><span class="chart-small-label">INTERACTIVE FUNCTION PLOT</span><h3 id="chart-title">Activation output</h3></div><div class="segmented" role="group" aria-label="Plot mode"><button type="button" class="segment active" data-plot="output" aria-pressed="true">Output</button><button type="button" class="segment" data-plot="gradient" aria-pressed="false">Gradient</button></div></div>
+              <div class="chart-container"><svg id="quinsh-chart" viewBox="0 0 740 405" role="img" aria-label="Interactive activation function chart for Quinsh, Swish and ReLU"></svg><div class="chart-tooltip" id="chart-tooltip" hidden></div></div>
+              <div class="legend"><span><i class="swatch quinsh-swatch"></i> Quinsh (editable)</span><span><i class="swatch swish-swatch"></i> Swish</span><span><i class="swatch relu-swatch"></i> ReLU</span></div>
+              <p class="chart-note">Illustrative function curves, mathematically generated in your browser. These are not measured training results or learned checkpoint values.</p>
+            </div>
+            <div class="panel controls-panel">
+              <div class="panel-header"><span>PARAMETER CONTROLS</span><button class="reset-button" id="reset-quinsh" type="button">↺ Reset</button></div>
+              <div class="controls-description">Adjust the activation shape. These values are for exploration, not fitted Res_UCN parameters.</div>
+              <div class="control-group"><div class="control-title"><label for="gamma">γ <span>Nonlinear scaling</span></label><output id="gamma-value">1.00</output></div><input id="gamma" type="range" min="0" max="2.5" step="0.05" value="1"/><p>How strongly the gated Swish-like branch contributes.</p></div>
+              <div class="control-group"><div class="control-title"><label for="delta">δ <span>Learnable input shift</span></label><output id="delta-value">0.00</output></div><input id="delta" type="range" min="-3" max="3" step="0.1" value="0"/><p>Moves the nonlinear transition left or right.</p></div>
+              <div class="control-group"><div class="control-title"><label for="alpha">α <span>Residual linear path</span></label><output id="alpha-value">0.10</output></div><input id="alpha" type="range" min="-0.5" max="1" step="0.05" value="0.1"/><p>Preserves a direct linear signal and gradient contribution.</p></div>
+              <div class="control-group"><div class="control-title"><label for="w">w <span>Gate sharpness</span></label><output id="w-value">1.00</output></div><input id="w" type="range" min="0.1" max="4" step="0.1" value="1"/><p>Controls the slope of the sigmoid gate.</p></div>
+              <div class="presets-label">EXPLORE PRESETS</div><div class="preset-buttons"><button class="preset active" data-preset="balanced" type="button">Balanced</button><button class="preset" data-preset="shifted" type="button">Shifted</button><button class="preset" data-preset="residual" type="button">Residual</button><button class="preset" data-preset="sharp" type="button">Sharp gate</button></div>
+            </div>
+          </div>
+          <div class="explain-grid"><article class="explain-card"><div class="explain-icon teal">01</div><h3>Beyond a fixed activation</h3><p>The learnable shift and slope let Quinsh reshape its nonlinear response during training, rather than relying on one fixed curve.</p></article><article class="explain-card"><div class="explain-icon purple">02</div><h3>A direct gradient path</h3><p>The αx term supplies a residual linear contribution. It can help preserve signal flow, although it does not guarantee the absence of dead units.</p></article><article class="explain-card"><div class="explain-icon orange">03</div><h3>Research origins</h3><p>Inspired by Swish-style gating, parametric activations and residual learning. The formulation is described on slides 12–14 of the group presentation.</p></article></div>
+        </section>
+
+        <section id="modules" class="section" data-section>
+          <div class="section-heading"><div><p class="overline">04 / COMPONENT EXPLORER</p><h2>Five ideas. <span class="gradient-text">One system.</span></h2><p class="section-description">Explore the research rationale behind each module. Authorship is shown explicitly because the architecture was built as a team.</p></div></div>
+          <div class="module-layout">
+            <div class="module-picker" id="module-picker">
+              <button type="button" class="module-tab active" data-module="quinsh"><span class="module-tab-index">01</span><span><strong>Quinsh activation</strong><small>Adaptive nonlinearity</small></span><span class="module-tab-tag">YOUR WORK</span></button>
+              <button type="button" class="module-tab" data-module="adsgc"><span class="module-tab-index">02</span><span><strong>ADSGC</strong><small>Adaptive-scale convolution</small></span><span class="module-tab-chevron">↗</span></button>
+              <button type="button" class="module-tab" data-module="ciac"><span class="module-tab-index">03</span><span><strong>CIAC</strong><small>Channel importance</small></span><span class="module-tab-chevron">↗</span></button>
+              <button type="button" class="module-tab" data-module="wbn"><span class="module-tab-index">04</span><span><strong>Weighted BatchNorm</strong><small>Robust statistics</small></span><span class="module-tab-chevron">↗</span></button>
+              <button type="button" class="module-tab" data-module="destop"><span class="module-tab-index">05</span><span><strong>DE-Stopping</strong><small>Energy + entropy</small></span><span class="module-tab-chevron">↗</span></button>
+            </div>
+            <div class="module-content panel" aria-live="polite"><div class="panel-header"><span id="module-eyebrow">MODULE 01 · ACTIVATION</span><span class="module-static">CONCEPT VIEW</span></div><div class="module-content-body"><div class="module-graphic" id="module-graphic" aria-hidden="true"></div><div class="module-overline" id="module-overline">YOUR CONTRIBUTION</div><h3 id="module-title">Quinsh activation</h3><p id="module-description">Balances a Swish-like gated pathway with a residual linear branch to adapt the shape of the activation.</p><div class="module-detail-label">HOW IT WORKS</div><p id="module-mechanism">Shift the input by δ, adjust the sigmoid gate using w, scale the nonlinear branch by γ, then add αx.</p><div class="module-credit"><span>RESPONSIBLE CONTRIBUTOR</span><strong id="module-author">Wilbert Andrew Yonathan</strong></div></div></div>
+          </div>
+        </section>
+
+        <section id="results" class="section" data-section>
+          <div class="section-heading"><div><p class="overline">05 / REPORTED EXPERIMENTS</p><h2>Efficiency with <span class="gradient-text">context.</span></h2><p class="section-description">The original group's CIFAR-10 comparison is reproduced from slide 22. No component-specific ablation was reported.</p></div><span class="section-tag">SOURCE: GROUP PRESENTATION / SLIDE 22</span></div>
+          <div class="results-grid"><div class="panel comparison-panel"><div class="panel-header"><span>RES_UCN VS BASELINE</span><span>CLASSIFICATION</span></div><div class="comparison-headers"><span>METRIC</span><span>RESNET-18</span><span>RES_UCN</span></div><div class="comparison-row"><span>Accuracy</span><span>89.90%</span><strong>91.45% <em>↗</em></strong></div><div class="comparison-row"><span>Parameters</span><span>~11.2M</span><strong>~3.4M <em>↘</em></strong></div><div class="comparison-row"><span>Training time</span><span>24m 00s</span><strong>17m 17s <em>↘</em></strong></div><div class="comparison-row"><span>Reported best epoch</span><span>—</span><strong>18</strong></div><div class="accuracy-viz"><div class="viz-heading">TEST ACCURACY <span>Percentage points</span></div><div class="bar-label"><span>ResNet-18 baseline</span><span>89.90%</span></div><div class="bar-track"><span class="bar resnet-bar" style="width:89.9%"></span></div><div class="bar-label"><span>Res_UCN</span><span>91.45%</span></div><div class="bar-track"><span class="bar ucn-bar" style="width:91.45%"></span></div><p>+1.55 percentage points compared with the reported baseline.</p></div></div><div class="panel results-summary"><div class="panel-header"><span>WHAT THE NUMBERS SUPPORT</span><span>≠ ABLATION</span></div><div class="result-highlight"><span>+1.55<span class="tiny-percent"> pp</span></span><small>Reported accuracy difference</small></div><div class="result-highlight"><span>~69.6<span class="tiny-percent">%</span></span><small>Approximate parameter reduction</small></div><div class="result-highlight"><span>~28<span class="tiny-percent">%</span></span><small>Approximate reduction in reported training time</small></div><div class="limitations"><strong>Research boundary</strong><p>These figures describe the combined group architecture under the reported experiment. They do not isolate Quinsh or demonstrate performance on datasets beyond CIFAR-10.</p></div></div></div>
+        </section>
+
+        <section id="inference" class="section" data-section>
+          <div class="section-heading"><div><p class="overline">06 / OPTIONAL LIVE INFERENCE</p><h2>Bring your own <span class="gradient-text">checkpoint.</span></h2><p class="section-description">True classification in a static website is possible with a compatible exported ONNX model. Your images and model run locally in the browser; no image is uploaded to our server.</p></div><span class="section-tag">OPTIONAL • ONNX RUNTIME WEB</span></div>
+          <div class="inference-layout"><div class="panel runner-panel"><div class="panel-header"><span>CLIENT-SIDE MODEL RUNNER</span><span id="runner-state" class="runner-indicator">NO MODEL LOADED</span></div><div class="runner-guide"><div class="runner-step"><span>1</span><div><strong>Load exported ONNX model</strong><small>Requires a compatible Res_UCN CIFAR-10 ONNX export.</small></div></div><label class="file-picker" for="model-file"><span>↥</span> Choose .onnx file <small id="model-filename">No file selected</small></label><input id="model-file" type="file" accept=".onnx,application/octet-stream" hidden/><div class="runner-step"><span>2</span><div><strong>Upload an image</strong><small>Automatically resized to 32 × 32 and normalized using the slide's CIFAR-10 values.</small></div></div><label class="upload-zone" id="upload-zone" for="image-file"><span class="upload-zone-icon">▧</span><strong>Drop an image here or browse</strong><small>PNG, JPEG, WebP · processed in your browser</small><img id="image-preview" alt="Selected image preview" hidden/></label><input id="image-file" type="file" accept="image/png,image/jpeg,image/webp" hidden/><button id="run-inference" type="button" class="btn btn-primary run-button" disabled>Run image classification <span>↗</span></button><p id="runner-feedback" class="runner-feedback" role="status">Select an ONNX model and an image to enable real inference. Predictions are never fabricated.</p></div></div><div class="panel prediction-panel"><div class="panel-header"><span>CLASSIFICATION OUTPUT</span><span>10 CIFAR-10 CLASSES</span></div><div id="empty-predictions" class="empty-predictions"><div class="empty-icon">◉</div><strong>Awaiting a model & image</strong><p>Unlike simulated demos, this interface will not display made-up classes or confidence scores. Load your exported checkpoint to run actual inference.</p><a class="text-link" href="README.md#enable-optional-real-inference">How to enable live predictions ↗</a></div><div id="prediction-results" hidden><div class="prediction-hero"><small>TOP PREDICTION</small><strong id="top-class">—</strong><span id="top-confidence">—</span></div><div id="prediction-bars"></div><p class="result-caution">Classifier scores may be unreliable on arbitrary uploaded images or inputs far outside the CIFAR-10 distribution.</p></div></div></div>
+          <p class="section-hint">Fully functional without model files: the architecture, Quinsh controls, module explorer and results dashboard work immediately on both hosting platforms. Only live inference needs a trained checkpoint exported to ONNX.</p>
+        </section>
+
+        <section id="credits" class="section credits-section" data-section>
+          <div class="section-heading"><div><p class="overline">07 / PROJECT SCOPE</p><h2>Built together. <span class="gradient-text">Credited clearly.</span></h2><p class="section-description">Res_UCN originated as an AIT301 group project. This website is a visual portfolio companion highlighting one contributor's specific research work.</p></div></div>
+          <div class="credits-layout"><div class="panel featured-credit"><span class="featured-badge">INDIVIDUAL CONTRIBUTION</span><div class="featured-symbol">Q<span>(x)</span></div><h3>Quinsh activation function</h3><p><strong>Wilbert Andrew Yonathan</strong> designed and presented Quinsh, a parametric activation combining learnable shifting, gating and a linear residual path. This interactive explorer emphasizes that contribution.</p><a class="btn btn-secondary" href="#quinsh">Open Quinsh Studio ↗</a></div><div class="panel team-panel"><div class="panel-header"><span>GROUP CONTRIBUTIONS</span><span>AIT301 · 2025</span></div><div class="team-row"><span>ADSGC</span><strong>Derol Chong Chun Kit</strong></div><div class="team-row"><span>CIAC</span><strong>Edward Ooi Wee Xue</strong></div><div class="team-row"><span>Weighted BatchNorm</span><strong>Wang XinYi</strong></div><div class="team-row highlighted"><span>Quinsh</span><strong>Wilbert Andrew Yonathan</strong></div><div class="team-row"><span>DE-Stopping</span><strong>Chua Kian Hoong</strong></div><div class="team-row"><span>Preprocessing & integration</span><strong>Siah Jie Sheng</strong></div><div class="team-foot">Contributions follow slide 2 of the original project presentation. The results belong to the overall group architecture.</div></div></div>
+          <div class="closing-note"><div><span class="eyebrow">END OF RESEARCH EXHIBIT</span><h3>Research is better when you can <em>explore it.</em></h3></div><div class="closing-actions"><a class="btn btn-primary" href="#quinsh">Experiment with Quinsh ↗</a><a class="btn btn-secondary" href="https://github.com/WAYTECHG/Res_UCN-Resnet-Unified-Convolution-Network" target="_blank" rel="noopener noreferrer">Source code ↗</a></div></div>
+        </section>
+      </main>
+      <footer><span>© 2026 Res_UCN Research Lab · Interactive portfolio exhibit</span><span>Conceptual visualizations • Original project: AIT301 group research, 2025</span></footer>
+    </div>
+  </div>
+</body>
+</html>
