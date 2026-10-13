@@ -7,7 +7,7 @@ sdk: static
 app_file: index.html
 pinned: false
 license: mit
-short_description: Interactive Res_UCN architecture, Quinsh activation, and CIFAR-10 research lab
+short_description: Res_UCN architecture and Quinsh research demo
 ---
 
 # Res_UCN — Interactive Research Lab
