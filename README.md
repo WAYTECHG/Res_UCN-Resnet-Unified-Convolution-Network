@@ -19,7 +19,7 @@ The model stops only when it is both stuck (loss plateau) and confident ($h > th
 A robust alternative to standard Batch Normalization. It uses a **Gaussian Kernel** to assign weights to pixels during mean and variance calculation.
 * **Effect:** Reduces the influence of outliers within a batch, leading to more stable "robust statistics" and smoother convergence.
 
-### 3. Quinsh Activation Layer <-- (My Contribution -Part)
+### 3. Quinsh Activation Layer <-- (My Contribution Part)
 A novel, parametric activation function defined as:
 $$y = \gamma \cdot (x_{shifted} \cdot \sigma(w \cdot x_{shifted})) + \alpha \cdot x$$
 * **Features:** Learnable shifting ($\delta$), gating ($w$), and a residual linear path ($\alpha$). 
