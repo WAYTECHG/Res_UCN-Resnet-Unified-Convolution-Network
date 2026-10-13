@@ -17,3 +17,50 @@ main{max-width:1620px;margin:0 auto;padding:0 clamp(22px,4.6vw,72px)}.section{pa
 @media (max-width:780px){:root{--sidebar-w:0px}.sidebar{transform:translateX(-105%);width:260px;transition:transform .25s;box-shadow:20px 0 60px #0009}.sidebar.open{transform:translateX(0)}.main-column{margin-left:0;width:100%}.menu-toggle{display:block}.topbar{height:64px;padding:0 20px}.crumb{font-size:9px;overflow:hidden;text-overflow:ellipsis}.top-indicator{display:none}.top-github{font-size:9px}.section{padding-top:78px}.hero-section{padding-top:61px}main{padding:0 22px}footer{padding:19px 22px;flex-direction:column;align-items:start}.metric-strip{grid-template-columns:repeat(2,1fr)}.metric:nth-child(2){border-right:0}.metric:nth-child(-n+2){border-bottom:1px solid #29374f}h1{font-size:clamp(40px,8.5vw,60px)}.hero-lead{font-size:13.5px}.module-layout,.credits-layout{grid-template-columns:1fr}.explain-grid{grid-template-columns:1fr}.explain-card{padding:19px}.closing-note{flex-direction:column;align-items:start}.formula{font-size:clamp(17px,4vw,27px)}.formula-card{padding:20px}.contribution-pill{display:none}}
 @media (max-width:520px){h1{font-size:clamp(36px,9vw,46px);letter-spacing:-2.5px}h2{font-size:34px;letter-spacing:-1.3px}.eyebrow{font-size:9px}.metric strong{font-size:28px}.metric>span{font-size:9px}.metric em{font-size:10px}.metric{padding:17px}.hero-visual{min-height:340px}.hero-svg{min-height:250px}.visual-head{padding:12px}.visual-head>span:first-child{font-size:9px}.visual-bottom{padding:11px}.stage-channels{padding:5px;font-size:9px}.stage-copy small{font-size:9px}.studio-layout{gap:14px}.controls-panel{grid-template-columns:1fr}.chart-toolbar{flex-wrap:wrap;padding:18px 15px}.chart-container{min-height:220px}.legend{gap:11px;padding:5px 15px 15px;font-size:10px}.chart-note{padding:12px 15px}.comparison-headers,.comparison-row{padding:15px 14px;font-size:11px}.comparison-headers{font-size:9px}.arch-flow{padding:24px 12px}.arch-inspector h3{font-size:22px}.module-content-body{padding:20px}.module-tab{min-height:69px}.section-heading{margin-bottom:22px}.runner-guide{padding:18px}.team-row{padding:14px 15px;font-size:10.5px}}
 @media (prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+/* Navigation fixes v2: consistent icons, reliable focus, responsive drawer */
+:root { scroll-padding-top: 0; }
+html { scroll-padding-top: 0; }
+.side-nav { gap: 5px; }
+.nav-link {
+  position: relative;
+  display: grid;
+  grid-template-columns: 21px minmax(0,1fr) auto;
+  align-items: center;
+  gap: 13px;
+  min-height: 49px;
+  padding: 12px 13px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  text-decoration: none;
+  color: #a6b7cf;
+  background: transparent;
+  transition: background-color .18s ease, border-color .18s ease, color .18s ease;
+}
+.nav-link .nav-icon {width:21px;height:21px;display:grid;place-items:center;font-size:unset;line-height:normal;}
+.nav-link .nav-icon svg {width:19px;height:19px;display:block;flex:none;}
+.nav-link > span:nth-child(2) {min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nav-link .nav-index {font-variant-numeric:tabular-nums;font-size:10px;justify-self:end;}
+.nav-link:hover {color:#eefaff;background:#14273b;border-color:#36516b;}
+.nav-link.active {background:#183348;color:#66ead6;border-color:#397188;}
+.nav-link.active .nav-index {color:#91ccdb;}
+.nav-link.active .nav-icon {color:#66ead6;}
+.nav-link:focus-visible, .sidebar-close:focus-visible, .menu-toggle:focus-visible {
+  outline:2px solid #71e9d7;
+  outline-offset:3px;
+}
+.sidebar {overflow-y:auto;overscroll-behavior:contain;}
+.sidebar-close {display:none;}
+.sidebar-backdrop[hidden] {display:none!important;}
+@media (max-width:780px) {
+  body.menu-open {overflow:hidden;}
+  .sidebar {width:min(296px,86vw);padding-top:55px;z-index:60;box-shadow:none;transition:transform .23s ease, box-shadow .23s ease;}
+  .sidebar.open {box-shadow:18px 0 60px #0009;}
+  .sidebar-close {display:grid;place-items:center;position:absolute;right:12px;top:9px;width:37px;height:37px;border:1px solid #36506b;border-radius:9px;color:#dfe9f5;background:#16253a;font-size:24px;line-height:1;cursor:pointer;}
+  .sidebar-backdrop {position:fixed;inset:0;display:block;background:rgba(4,10,24,.72);backdrop-filter:blur(3px);z-index:50;}
+  .side-nav {gap:6px;}
+  .nav-link {min-height:53px;}
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-link,.sidebar {transition:none!important;}
+}

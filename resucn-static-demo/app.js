@@ -3,32 +3,128 @@
 const $ = (selector, root=document) => root.querySelector(selector);
 const $$ = (selector, root=document) => [...root.querySelectorAll(selector)];
 
-// Navigation, mobile menu, and active-section tracking
+// Navigation: reliable anchor positioning, scroll tracking, browser history,
+// and an accessible mobile drawer. Sections are tracked by their visible headings,
+// not by whichever oversized section intersects most of the viewport.
 const sidebar = $('#sidebar');
 const menuButton = $('#menu-toggle');
-menuButton.addEventListener('click', () => {
-  const isOpen = sidebar.classList.toggle('open');
-  menuButton.setAttribute('aria-expanded', String(isOpen));
-});
-$$('.nav-link').forEach(link => link.addEventListener('click', () => {
-  sidebar.classList.remove('open');
-  menuButton.setAttribute('aria-expanded', 'false');
-}));
-document.addEventListener('keydown', e => {
-  if(e.key === 'Escape') { sidebar.classList.remove('open'); menuButton.setAttribute('aria-expanded','false'); }
-});
-document.addEventListener('click', e => {
-  if(sidebar.classList.contains('open') && !sidebar.contains(e.target) && !menuButton.contains(e.target)) {
-    sidebar.classList.remove('open'); menuButton.setAttribute('aria-expanded','false');
+const closeButton = $('#sidebar-close');
+const backdrop = $('#sidebar-backdrop');
+const topbar = $('.topbar');
+const navLinks = $$('.nav-link');
+const sections = $$('[data-section]');
+const sectionMap = new Map(sections.map(section => [section.id, section]));
+const mobileQuery = window.matchMedia('(max-width: 780px)');
+const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+let navigationLock = null;
+let releaseNavigationTimer = null;
+let scrollUpdatePending = false;
+
+function setActiveSection(id) {
+  navLinks.forEach(link => {
+    const active = link.dataset.nav === id;
+    link.classList.toggle('active', active);
+    if (active) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
+  });
+}
+function setMenuOpen(open, returnFocus = false) {
+  const nextOpen = !!open && mobileQuery.matches;
+  sidebar.classList.toggle('open', nextOpen);
+  backdrop.hidden = !nextOpen;
+  document.body.classList.toggle('menu-open', nextOpen);
+  menuButton.setAttribute('aria-expanded', String(nextOpen));
+  menuButton.setAttribute('aria-label', nextOpen ? 'Close navigation menu' : 'Open navigation menu');
+  menuButton.textContent = nextOpen ? '✕' : '☰';
+  sidebar.inert = mobileQuery.matches && !nextOpen;
+  if (nextOpen) closeButton.focus({preventScroll:true});
+  else if (returnFocus && mobileQuery.matches) menuButton.focus({preventScroll:true});
+}
+function sectionHeading(section) {
+  return $('.section-heading', section) || section;
+}
+function sectionScrollY(section) {
+  if(section.id === 'home') return 0;
+  const heading = sectionHeading(section);
+  const viewportTop = topbar.getBoundingClientRect().height + 20;
+  return Math.max(0, Math.round(window.scrollY + heading.getBoundingClientRect().top - viewportTop));
+}
+function updateSectionFromScroll() {
+  if(navigationLock) return;
+  const marker = topbar.getBoundingClientRect().height + 44;
+  let current = sections[0].id;
+  for(const section of sections) {
+    if(sectionHeading(section).getBoundingClientRect().top <= marker) current = section.id;
   }
+  if (window.scrollY < 45) current = 'home';
+  else if(window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 5) current = sections[sections.length - 1].id;
+  setActiveSection(current);
+}
+function requestScrollUpdate(){
+  if(scrollUpdatePending) return;
+  scrollUpdatePending=true;
+  requestAnimationFrame(() => { scrollUpdatePending=false; updateSectionFromScroll(); });
+}
+function navigateToSection(id, {saveHistory=true, behavior=null}={}) {
+  const target = sectionMap.get(id);
+  if(!target) return;
+  // Lock the highlight to the clicked section during smooth scrolling.
+  const cameFromMobileDrawer = sidebar.classList.contains('open');
+  navigationLock = id;
+  setActiveSection(id);
+  setMenuOpen(false);
+  if (cameFromMobileDrawer) {
+    const focusTarget = $('h1, h2', target);
+    if (focusTarget) {
+      focusTarget.setAttribute('tabindex', '-1');
+      focusTarget.focus({preventScroll:true});
+    }
+  }
+  clearTimeout(releaseNavigationTimer);
+  if (saveHistory && window.location.hash !== `#${id}`) {
+    // Browser history remains functional for back/forward navigation.
+    try { window.history.pushState({section:id}, '', `#${id}`); } catch (e) { /* sandbox preview */ }
+  }
+  const scrollBehavior = behavior || (motionQuery.matches ? 'instant' : 'smooth');
+  window.scrollTo({top:sectionScrollY(target),behavior:scrollBehavior});
+  releaseNavigationTimer = setTimeout(() => {
+    navigationLock=null;
+    updateSectionFromScroll();
+  }, scrollBehavior === 'smooth' ? 1450 : 90);
+}
+menuButton.addEventListener('click', () => setMenuOpen(!sidebar.classList.contains('open')));
+closeButton.addEventListener('click', () => setMenuOpen(false, true));
+backdrop.addEventListener('click', () => setMenuOpen(false, true));
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && sidebar.classList.contains('open')) setMenuOpen(false, true);
 });
-const navObserver = new IntersectionObserver(entries => {
-  const visibles = entries.filter(e => e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio);
-  if(!visibles.length) return;
-  const id = visibles[0].target.id;
-  $$('.nav-link').forEach(link => link.classList.toggle('active', link.dataset.nav === id));
-},{rootMargin:'-12% 0px -48% 0px',threshold:[0,.1,.25,.5]});
-$$('[data-section]').forEach(el => navObserver.observe(el));
+// All internal links use consistent anchor positioning (not just sidebar links).
+$$('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', event => {
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    if(!sectionMap.has(id)) return;
+    event.preventDefault();
+    navigateToSection(id);
+  });
+});
+window.addEventListener('scroll',requestScrollUpdate,{passive:true});
+window.addEventListener('resize', () => {setMenuOpen(false);requestScrollUpdate();},{passive:true});
+window.addEventListener('popstate', () => {
+  const id = decodeURIComponent(window.location.hash.slice(1)) || 'home';
+  navigateToSection(sectionMap.has(id) ? id : 'home', {saveHistory:false,behavior:'instant'});
+});
+window.addEventListener('hashchange', () => {
+  const id = decodeURIComponent(window.location.hash.slice(1)) || 'home';
+  if(sectionMap.has(id)) navigateToSection(id,{saveHistory:false,behavior:'instant'});
+});
+// Handle bookmarked deep links after fonts/layout have loaded.
+window.addEventListener('load', () => {
+  const hashId = decodeURIComponent(window.location.hash.slice(1));
+  if(sectionMap.has(hashId)) navigateToSection(hashId,{saveHistory:false,behavior:'instant'});
+  else updateSectionFromScroll();
+});
+setMenuOpen(false);
+requestScrollUpdate();
 
 // Architecture Inspector: descriptions intentionally high-level, as in presentation/README.
 const stages = [

@@ -9,23 +9,24 @@
   <meta property="og:description" content="An interactive visual research exhibit for the Res_UCN group project and the Quinsh activation function." />
   <title>Res_UCN — Interactive Research Lab</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
-  <link rel="stylesheet" href="styles.css" />
-  <script defer src="app.js"></script>
+  <link rel="stylesheet" href="styles.css?v=2" />
+  <script defer src="app.js?v=2"></script>
 </head>
 <body>
   <div class="site-shell">
     <aside class="sidebar" id="sidebar" aria-label="Primary navigation">
       <a href="#home" class="brand" aria-label="Res UCN home"><span class="brand-mark">R<span class="brand-mark-dot">.</span></span><span class="brand-words"><strong>Res_UCN</strong><small>RESEARCH LAB / 2025</small></span></a>
+      <button type="button" class="sidebar-close" id="sidebar-close" aria-label="Close navigation menu">&times;</button>
       <div class="sidebar-divider"></div>
       <p class="sidebar-label">EXPLORE</p>
-      <nav class="side-nav">
-        <a href="#home" class="nav-link active" data-nav="home"><span class="nav-icon">⌂</span><span>Overview</span><span class="nav-index">01</span></a>
-        <a href="#architecture" class="nav-link" data-nav="architecture"><span class="nav-icon">▦</span><span>Architecture</span><span class="nav-index">02</span></a>
-        <a href="#quinsh" class="nav-link" data-nav="quinsh"><span class="nav-icon">∿</span><span>Quinsh Studio</span><span class="nav-index">03</span></a>
-        <a href="#modules" class="nav-link" data-nav="modules"><span class="nav-icon">◇</span><span>Five modules</span><span class="nav-index">04</span></a>
-        <a href="#results" class="nav-link" data-nav="results"><span class="nav-icon">▤</span><span>Results</span><span class="nav-index">05</span></a>
-        <a href="#inference" class="nav-link" data-nav="inference"><span class="nav-icon">◎</span><span>Model Runner</span><span class="nav-index">06</span></a>
-        <a href="#credits" class="nav-link" data-nav="credits"><span class="nav-icon">↗</span><span>Credits & scope</span><span class="nav-index">07</span></a>
+      <nav class="side-nav" aria-label="Explore project sections">
+        <a href="#home" class="nav-link active" data-nav="home" aria-current="location"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-7h6v7"/></svg></span><span>Overview</span><span class="nav-index">01</span></a>
+        <a href="#architecture" class="nav-link" data-nav="architecture"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><span>Architecture</span><span class="nav-index">02</span></a>
+        <a href="#quinsh" class="nav-link" data-nav="quinsh"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c3-9 7-9 10 0s7 9 10 0"/></svg></span><span>Quinsh Studio</span><span class="nav-index">03</span></a>
+        <a href="#modules" class="nav-link" data-nav="modules"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2" transform="rotate(45 12 12)"/><path d="M12 8v8M8 12h8"/></svg></span><span>Five modules</span><span class="nav-index">04</span></a>
+        <a href="#results" class="nav-link" data-nav="results"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v18h17"/><path d="m7 16 4-5 3 2 5-7"/></svg></span><span>Results</span><span class="nav-index">05</span></a>
+        <a href="#inference" class="nav-link" data-nav="inference"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m10 9 5 3-5 3z"/></svg></span><span>Model Runner</span><span class="nav-index">06</span></a>
+        <a href="#credits" class="nav-link" data-nav="credits"><span class="nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg></span><span>Credits & scope</span><span class="nav-index">07</span></a>
       </nav>
       <div class="sidebar-bottom">
         <div class="small-status"><span class="status-pulse"></span> Static • browser-based</div>
@@ -33,9 +34,11 @@
       </div>
     </aside>
 
+    <div class="sidebar-backdrop" id="sidebar-backdrop" hidden aria-hidden="true"></div>
+
     <div class="main-column">
       <header class="topbar">
-        <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+        <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Open navigation menu" aria-controls="sidebar" aria-expanded="false">☰</button>
         <span class="crumb"><span class="crumb-muted">RESEARCH /</span> RESNET UNIFIED CONVOLUTIONAL NETWORK</span>
         <div class="top-right"><span class="top-indicator"><span></span> Interactive showcase</span><a href="https://github.com/WAYTECHG/Res_UCN-Resnet-Unified-Convolution-Network" target="_blank" rel="noopener noreferrer" class="top-github">GITHUB ↗</a></div>
       </header>

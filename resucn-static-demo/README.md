@@ -16,6 +16,15 @@ A **fully static**, responsive, research-focused portfolio website for the AIT30
 
 **Source research:** [Res_UCN repository](https://github.com/WAYTECHG/Res_UCN-Resnet-Unified-Convolution-Network). The app is an explanatory exhibit; it is not a replacement for the original trained notebook.
 
+## Navigation updates (v2)
+
+- Sidebar links scroll directly to the intended section heading rather than using stacked CSS anchor offsets.
+- Active navigation follows the selected section while smooth-scrolling and updates correctly when scrolling manually.
+- Unified inline SVG icons, visible keyboard focus indicators, and `aria-current` for the active section.
+- Mobile menu includes a dimmed backdrop, close button, Escape-to-close, and scroll locking.
+- Deep links and browser back/forward retain section navigation.
+- Versioned stylesheet and script URLs help browsers fetch the new files after redeployment.
+
 ## What works without a backend
 
 - An interactive model architecture inspector with four residual stages.
