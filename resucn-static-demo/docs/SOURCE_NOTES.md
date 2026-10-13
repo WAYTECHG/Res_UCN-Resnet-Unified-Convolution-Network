@@ -17,4 +17,9 @@ Reference: *AIT301 Group 2 Final Project Slide*, 2025 (provided by the project t
 
 No ablation, cross-dataset robustness claims, measured interpretability/Grad-CAM output, or synthetic classification outputs are represented as experiments in this demo.
 
+- CIFAR-10 Lab displays ten standard CIFAR-10 category labels and counts (50,000 training / 10,000 test; 5,000 train and 1,000 test per class), known from the public dataset specification; these values are not measured in the team's experiment.
+- Animal/vehicle categorization and icon illustrations are explanation-only. Emoji drawings are NOT images from CIFAR-10.
+- The preprocessing simulator uses concept drawings or a locally supplied image. Its brightness control demonstrates a related adjustment, not exact original augmentation hyperparameters. Numeric values are computed from the rendered 32×32 pixels and slide 21 normalization statistics.
+- The ONNX model runner was removed: this website does not perform real classification or make up any predictions.
+
 **Activation chart presets** were selected for comprehensibility; no claim is made that the original model learned those displayed parameters.

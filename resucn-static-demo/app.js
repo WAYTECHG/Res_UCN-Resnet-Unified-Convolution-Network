@@ -285,97 +285,174 @@ function showModule(key){
 $$('[data-module]').forEach(b=>b.addEventListener('click',()=>showModule(b.dataset.module)));
 showModule('quinsh');
 
-// Real, opt-in ONNX Runtime Web client-side classification; never substitute random predictions.
-// No checkpoint is supplied or loaded automatically because repository does not publish weights.
-const CIFAR10=['Airplane','Automobile','Bird','Cat','Deer','Dog','Frog','Horse','Ship','Truck'];
-const NORM_MEAN=[.49,.48,.44],NORM_STD=[.20,.19,.20];
-const runtimeURL='https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/ort.min.js';
-let modelFile=null, imageFile=null, session=null, loadingRuntime=null, previewObjectURL=null;
-const runButton=$('#run-inference');
-function feedback(message,kind=''){const el=$('#runner-feedback');el.textContent=message;el.className='runner-feedback'+(kind?' '+kind:'')}
-function updateRunnerState(){runButton.disabled=!(modelFile&&imageFile);$('#runner-state').textContent=session?'ONNX SESSION READY':modelFile?'MODEL SELECTED':'NO MODEL LOADED'}
-$('#model-file').addEventListener('change',e=>{
-  const f=e.target.files?.[0]||null;
-  if(f && !f.name.toLowerCase().endsWith('.onnx')){feedback('Please select a .onnx model file.','error');return}
-  modelFile=f;session=null;$('#model-filename').textContent=f?f.name:'No file selected';updateRunnerState();
-  if(f)feedback(`Selected ${f.name} (${(f.size/1024/1024).toFixed(1)} MB). The model will load after you click Run.`);
+
+// CIFAR-10 educational exploration — no checkpoint or artificial predictions.
+// Official CIFAR-10 dataset labels and their standard cardinalities are distinct from
+// results reported in the Res_UCN group presentation. Sample art is illustrative.
+const CIFAR_CLASSES = [
+  {name:'Airplane',group:'vehicle',emoji:'✈️',color:'#476b99',description:'An aircraft category. CIFAR-10 includes many different views and backgrounds, which can make 32 × 32 object recognition challenging.'},
+  {name:'Automobile',group:'vehicle',emoji:'🚗',color:'#835e8e',description:'A passenger-automobile category, distinct from the truck category in the ten-label dataset.'},
+  {name:'Bird',group:'animal',emoji:'🐦',color:'#417d7b',description:'A bird category. Pose, size, and surroundings can differ substantially across small images.'},
+  {name:'Cat',group:'animal',emoji:'🐈',color:'#8872b0',description:'An animal class often used to illustrate the difference between recognizable shapes and fine textures in low-resolution images.'},
+  {name:'Deer',group:'animal',emoji:'🦌',color:'#98765c',description:'The deer category illustrates why varied animal silhouettes and natural backgrounds can complicate recognition.'},
+  {name:'Dog',group:'animal',emoji:'🐕',color:'#657cba',description:'A dog category containing varied appearances. The gallery symbol is not a real CIFAR-10 test image.'},
+  {name:'Frog',group:'animal',emoji:'🐸',color:'#4a8e78',description:'A frog category, included among the six animal labels in CIFAR-10.'},
+  {name:'Horse',group:'animal',emoji:'🐎',color:'#a27456',description:'A horse category with many potential camera angles, scenes and appearances.'},
+  {name:'Ship',group:'vehicle',emoji:'🚢',color:'#448da1',description:'A watercraft category. Background color and context can vary across real dataset images.'},
+  {name:'Truck',group:'vehicle',emoji:'🚚',color:'#9c704e',description:'A truck category, differentiated from automobile in CIFAR-10.'},
+];
+const IMAGE_MEAN=[0.49,0.48,0.44], IMAGE_STD=[0.20,0.19,0.20];
+const gallery=$('#class-grid'), sourceCanvas=$('#source-canvas'), outputCanvas=$('#processed-canvas');
+const sourceCtx=sourceCanvas.getContext('2d', {willReadFrequently:true});
+const outputCtx=outputCanvas.getContext('2d',{willReadFrequently:true});
+let selectedClass=3, activeFilter='all', customImage=null, processedPixels=null;
+let flipActive=false, brightness=100, gridActive=false;
+let inspectedX=16, inspectedY=16;
+
+function buildClassGrid(){
+  gallery.replaceChildren();
+  CIFAR_CLASSES.forEach((entry,index)=>{
+    if(activeFilter!=='all' && entry.group!==activeFilter)return;
+    const b=document.createElement('button'); b.type='button'; b.className='class-button';
+    b.dataset.classIndex=String(index);b.setAttribute('aria-pressed', String(selectedClass===index));
+    if(selectedClass===index)b.classList.add('selected');
+    b.innerHTML=`<span class="class-button-art" style="--class-color:${entry.color}"><span aria-hidden="true">${entry.emoji}</span></span><span class="class-button-meta"><small>${String(index).padStart(2,'0')}</small><strong>${entry.name}</strong></span>`;
+    b.addEventListener('click',()=>chooseClass(index));
+    gallery.append(b);
+  });
+  $('#class-counter').textContent=`${gallery.childElementCount} ${gallery.childElementCount===1?'CLASS':'CLASSES'}`;
+}
+function chooseClass(index){
+  selectedClass=index;customImage=null;
+  const info=CIFAR_CLASSES[index];
+  $('#selected-index').textContent=`CLASS ${String(index).padStart(2,'0')} / 09`;
+  $('#selected-class').textContent=info.name;
+  $('#selected-description').textContent=info.description;
+  $('#selected-type').textContent=info.group==='animal'?'Animal':'Vehicle';
+  $('#inspector-emoji').textContent=info.emoji;
+  $('#inspector-art').style.setProperty('--class-color',info.color);
+  $('#source-caption').textContent=`${info.name} · concept illustration`;
+  // Keep class selection visible when switching between category filters.
+  if(activeFilter!=='all' && info.group!==activeFilter){activeFilter='all';updateFilters()}
+  buildClassGrid(); drawInputArt(); updatePreview();
+}
+function updateFilters(){
+  $$('[data-filter]').forEach(b=>{const on=b.dataset.filter===activeFilter;b.classList.toggle('active',on);b.setAttribute('aria-pressed',String(on))});
+  buildClassGrid();
+}
+$$('[data-filter]').forEach(b=>b.addEventListener('click',()=>{
+  activeFilter=b.dataset.filter;
+  const current=CIFAR_CLASSES[selectedClass];
+  if(activeFilter!=='all' && current.group!==activeFilter){
+    selectedClass=CIFAR_CLASSES.findIndex(x=>x.group===activeFilter);
+    chooseClass(selectedClass);
+    activeFilter=b.dataset.filter;
+  }
+  updateFilters();
+}));
+function drawInputArt(){
+  const w=sourceCanvas.width, h=sourceCanvas.height;
+  sourceCtx.clearRect(0,0,w,h);
+  if(customImage){
+    const iw=customImage.naturalWidth || customImage.width;
+    const ih=customImage.naturalHeight || customImage.height;
+    const scale=Math.max(w/iw,h/ih),rw=iw*scale,rh=ih*scale;
+    sourceCtx.drawImage(customImage,(w-rw)/2,(h-rh)/2,rw,rh);
+    return;
+  }
+  const data=CIFAR_CLASSES[selectedClass];
+  const top=data.group==='vehicle'?'#24385b':'#30435f';
+  const gr=sourceCtx.createLinearGradient(0,0,w,h);
+  gr.addColorStop(0,data.color); gr.addColorStop(1,top);
+  sourceCtx.fillStyle=gr;sourceCtx.fillRect(0,0,w,h);
+  sourceCtx.globalAlpha=.14;
+  for(let i=0;i<10;i++){
+    sourceCtx.fillStyle=i%2?'#ffffff':'#9febd9';
+    sourceCtx.beginPath();sourceCtx.arc((i*67+23)%w,(i*31+32)%h,10+i%3*12,0,Math.PI*2);sourceCtx.fill();
+  }
+  sourceCtx.globalAlpha=1;
+  sourceCtx.fillStyle='#ffffff2c';sourceCtx.beginPath();sourceCtx.ellipse(128,210,85,14,0,0,Math.PI*2);sourceCtx.fill();
+  sourceCtx.textAlign='center';sourceCtx.textBaseline='middle';
+  sourceCtx.font='136px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif';
+  sourceCtx.fillText(data.emoji,128,127);
+}
+function updatePreview(){
+  outputCtx.clearRect(0,0,32,32);
+  outputCtx.save();
+  if(flipActive){outputCtx.translate(32,0);outputCtx.scale(-1,1)}
+  outputCtx.drawImage(sourceCanvas,0,0,32,32);
+  outputCtx.restore();
+  const img=outputCtx.getImageData(0,0,32,32),d=img.data;
+  const factor=brightness/100;
+  for(let i=0;i<d.length;i+=4){
+    for(let c=0;c<3;c++)d[i+c]=Math.min(255,Math.max(0,Math.round(d[i+c]*factor)));
+  }
+  outputCtx.putImageData(img,0,0); processedPixels=img;
+  inspectPixel(inspectedX,inspectedY);
+}
+function inspectPixel(x,y){
+  if(!processedPixels)return;
+  inspectedX=Math.max(0,Math.min(31,x));inspectedY=Math.max(0,Math.min(31,y));
+  const i=(inspectedY*32+inspectedX)*4;
+  const channels=processedPixels.data;
+  const names=['red','green','blue'];
+  names.forEach((name,c)=>{
+    const raw=channels[i+c];
+    $('#pixel-'+name).textContent=String(raw);
+    $('#norm-'+name).textContent=((raw/255-IMAGE_MEAN[c])/IMAGE_STD[c]).toFixed(2);
+    $('#'+name+'-bar').style.width=(raw/255*100).toFixed(2)+'%';
+  });
+  $('#pixel-coords').textContent=`(${inspectedX}, ${inspectedY})`;
+  const highlight=$('#pixel-selector');
+  highlight.style.left=(inspectedX/32*100)+'%';
+  highlight.style.top=(inspectedY/32*100)+'%';
+}
+outputCanvas.addEventListener('click',e=>{
+  const r=outputCanvas.getBoundingClientRect();
+  inspectPixel(Math.floor((e.clientX-r.left)/r.width*32),Math.floor((e.clientY-r.top)/r.height*32));
 });
-function setImage(file){
-  if(!file)return;
-  if(!['image/png','image/jpeg','image/webp'].includes(file.type))return feedback('Please use a PNG, JPEG, or WebP image.','error');
-  imageFile=file;
-  if(previewObjectURL)URL.revokeObjectURL(previewObjectURL);
-  previewObjectURL=URL.createObjectURL(file);
-  const im=$('#image-preview');im.src=previewObjectURL;im.hidden=false;im.alt=`Selected image: ${file.name}`;
-  updateRunnerState();feedback(`Selected ${file.name}. ${modelFile?'Ready for inference.':'Now select the ONNX model.'}`);
-}
-$('#image-file').addEventListener('change',e=>setImage(e.target.files?.[0]));
-const zone=$('#upload-zone');
-zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('dragover')});
-zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
-zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('dragover');setImage(e.dataTransfer.files?.[0])});
-function ensureORT(){
- if(window.ort)return Promise.resolve(window.ort);
- if(!loadingRuntime)loadingRuntime=new Promise((resolve,reject)=>{
-   const script=document.createElement('script');script.src=runtimeURL;script.async=true;
-   script.onload=()=>window.ort?resolve(window.ort):reject(new Error('ONNX Runtime did not load.'));
-   script.onerror=()=>reject(new Error('Could not download the ONNX Runtime Web library. Please check the connection.'));
-   document.head.append(script);
- });
- return loadingRuntime;
-}
-async function preprocessImage(file,ort){
- const img=await createImageBitmap(file);
- const canvas=document.createElement('canvas');canvas.width=32;canvas.height=32;
- const ctx=canvas.getContext('2d',{willReadFrequently:true});
- ctx.drawImage(img,0,0,32,32);if(img.close)img.close();
- const rgba=ctx.getImageData(0,0,32,32).data;
- const input=new Float32Array(3*32*32);
- for(let c=0;c<3;c++)for(let px=0;px<1024;px++)input[c*1024+px]=(rgba[px*4+c]/255-NORM_MEAN[c])/NORM_STD[c];
- return new ort.Tensor('float32',input,[1,3,32,32]);
-}
-function softmax(arr){
- const max=Math.max(...arr);const exp=arr.map(v=>Math.exp(v-max));const sum=exp.reduce((a,b)=>a+b,0);
- return exp.map(v=>v/sum);
-}
-function displayPredictions(scores){
- const sorted=scores.map((p,i)=>({label:CIFAR10[i],p})).sort((a,b)=>b.p-a.p);
- $('#empty-predictions').hidden=true;$('#prediction-results').hidden=false;
- $('#top-class').textContent=sorted[0].label;$('#top-confidence').textContent=(sorted[0].p*100).toFixed(2)+'% confidence';
- const bars=$('#prediction-bars');bars.replaceChildren();
- sorted.forEach(r=>{
-   const row=document.createElement('div');row.className='pred-row';
-   const head=document.createElement('div');head.className='pred-header';
-   const name=document.createElement('span');name.textContent=r.label;
-   const value=document.createElement('span');value.textContent=(r.p*100).toFixed(1)+'%';
-   head.append(name,value);row.append(head);
-   const track=document.createElement('div');track.className='pred-bar';
-   const bar=document.createElement('span');bar.style.width=(r.p*100).toFixed(3)+'%';
-   track.append(bar);row.append(track);bars.append(row);
- });
-}
-runButton.addEventListener('click',async()=>{
- if(!modelFile||!imageFile)return;
- runButton.disabled=true;runButton.textContent='Running in browser…';feedback('Loading model and preparing input…');
- try{
-   const ort=await ensureORT();
-   ort.env.wasm.wasmPaths='https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/';
-   if(!session){
-     const bytes=await modelFile.arrayBuffer();
-     session=await ort.InferenceSession.create(bytes,{executionProviders:['wasm']});
-   }
-   const input=await preprocessImage(imageFile,ort);
-   const meta=session.inputMetadata?.[session.inputNames[0]];
-   const dims=meta?.dimensions||meta?.dims||[];
-   const shapeCorrect=!dims.length||dims.length===4&&(+dims[1]===3||!Number.isFinite(+dims[1]))&&(+dims[2]===32||!Number.isFinite(+dims[2]))&&(+dims[3]===32||!Number.isFinite(+dims[3]));
-   if(!shapeCorrect)throw new Error(`This model expects input ${JSON.stringify(dims)} rather than [1,3,32,32]. Export your trained CIFAR-10 model with an NCHW 32×32 input.`);
-   const outputs=await session.run({[session.inputNames[0]]:input});
-   const tensor=outputs[session.outputNames[0]];
-   const raw=Array.from(tensor.data);
-   if(raw.length!==10||raw.some(v=>!Number.isFinite(v)))throw new Error(`Expected exactly 10 finite CIFAR-10 logits; found ${raw.length} values.`);
-   displayPredictions(softmax(raw));
-   feedback('Inference complete. Processed locally in your browser; results come from the ONNX model you selected.','success');
-   updateRunnerState();
- }catch(err){feedback(`Could not run inference: ${err.message||String(err)}`,'error')}
- finally{runButton.disabled=!(modelFile&&imageFile);runButton.innerHTML='Run image classification <span>↗</span>'}
+outputCanvas.setAttribute('tabindex','0');
+outputCanvas.addEventListener('keydown',e=>{
+  const d={ArrowRight:[1,0],ArrowLeft:[-1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];
+  if(d){e.preventDefault();inspectPixel(inspectedX+d[0],inspectedY+d[1])}
 });
+$('#demo-flip').addEventListener('click',()=>{
+  flipActive=!flipActive;
+  const b=$('#demo-flip');b.setAttribute('aria-pressed',String(flipActive));b.classList.toggle('active',flipActive);
+  $('span',b).textContent=flipActive?'ON':'OFF';updatePreview();
+});
+$('#demo-grid').addEventListener('click',()=>{
+  gridActive=!gridActive;
+  const b=$('#demo-grid');b.setAttribute('aria-pressed',String(gridActive));b.classList.toggle('active',gridActive);
+  $('span',b).textContent=gridActive?'ON':'OFF';$('#pixel-frame').classList.toggle('grid-on',gridActive);
+});
+$('#demo-brightness').addEventListener('input',e=>{
+  brightness=Number(e.target.value);
+  $('#brightness-value').textContent=brightness+'%';updatePreview();
+});
+$('#example-image').addEventListener('change',e=>{
+  const f=e.target.files?.[0]; if(!f)return;
+  if(!['image/jpeg','image/png','image/webp'].includes(f.type)){
+    $('#process-status').textContent='Unsupported file type. Please select a JPEG, PNG or WebP image.';return;
+  }
+  const objectUrl=URL.createObjectURL(f);
+  const img=new Image();
+  img.onload=()=>{
+    URL.revokeObjectURL(objectUrl);customImage=img;
+    $('#source-caption').textContent=`${f.name} · local file`;
+    $('#process-status').textContent='Your image is processed locally. The selected category above is a reference label only — this lab does not classify the uploaded image.';
+    drawInputArt();updatePreview();
+  };
+  img.onerror=()=>{URL.revokeObjectURL(objectUrl);$('#process-status').textContent='Could not load this image. Please try another file.'};
+  img.src=objectUrl;
+});
+$('#demo-reset').addEventListener('click',()=>{
+  customImage=null;flipActive=false;gridActive=false;brightness=100;
+  $('#example-image').value='';$('#demo-brightness').value='100';$('#brightness-value').textContent='100%';
+  $('#pixel-frame').classList.remove('grid-on');
+  for(const id of ['demo-flip','demo-grid']){const b=$('#'+id);b.classList.remove('active');b.setAttribute('aria-pressed','false');$('span',b).textContent='OFF'}
+  $('#source-caption').textContent=CIFAR_CLASSES[selectedClass].name+' · concept illustration';
+  $('#process-status').textContent="These are educational image transformations; they do not reproduce the original training pipeline's exact stochastic settings or produce model predictions.";
+  drawInputArt();updatePreview();
+});
+chooseClass(3);

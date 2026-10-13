@@ -7,131 +7,104 @@ sdk: static
 app_file: index.html
 pinned: false
 license: mit
-short_description: Interactive Res_UCN architecture and Quinsh activation research demo
+short_description: Interactive Res_UCN architecture, Quinsh activation, and CIFAR-10 research lab
 ---
 
 # Res_UCN — Interactive Research Lab
 
-A **fully static**, responsive, research-focused portfolio website for the AIT301 group project **ResNet Unified Convolutional Network (Res_UCN)**. It highlights **Quinsh**, the activation function contributed by **Wilbert Andrew Yonathan**, without claiming that he implemented all five research components.
+A **fully static, responsive** website for the AIT301 group project *ResNet Unified Convolutional Network (Res_UCN)*. It presents the whole architecture while distinguishing **Wilbert Andrew Yonathan's individual contribution: the Quinsh activation function**. This is a research explanation website rather than a trained classifier.
 
-**Source research:** [Res_UCN repository](https://github.com/WAYTECHG/Res_UCN-Resnet-Unified-Convolution-Network). The app is an explanatory exhibit; it is not a replacement for the original trained notebook.
+**Original project:** [Res_UCN source repository](https://github.com/WAYTECHG/Res_UCN-Resnet-Unified-Convolution-Network).
 
-## Navigation updates (v2)
+## Features
 
-- Sidebar links scroll directly to the intended section heading rather than using stacked CSS anchor offsets.
-- Active navigation follows the selected section while smooth-scrolling and updates correctly when scrolling manually.
-- Unified inline SVG icons, visible keyboard focus indicators, and `aria-current` for the active section.
-- Mobile menu includes a dimmed backdrop, close button, Escape-to-close, and scroll locking.
-- Deep links and browser back/forward retain section navigation.
-- Versioned stylesheet and script URLs help browsers fetch the new files after redeployment.
+- **Overview:** high-level research goals, published metrics and residual feature-flow graphic.
+- **Architecture:** interactive inspector for four residual stages.
+- **Quinsh Studio:** live plot of `Q(x) = γ(x − δ) σ(w(x − δ)) + αx`; sliders for γ, δ, w, α, presets, output/derivative comparison with ReLU and Swish.
+- **Five modules:** concepts and individual contributor credits for ADSGC, CIAC, Weighted BatchNorm, Quinsh and DE-Stopping.
+- **Results:** group-reported accuracy (Res_UCN **91.45%**, baseline ResNet-18 **89.90%**); parameters (**~3.4M** vs **~11.2M**); and reported training time (**17m17s** vs **24m**).
+- **CIFAR-10 Lab:** interactive label gallery with all ten standard classes, filters (animals and vehicles), illustrative category icons, client-side image preprocessing demonstration, optional local photo upload, flip, brightness, pixel grid, and numerical RGB/normalization inspector based on the group's slide 21.
+- **Credits:** highlights Quinsh as Wilbert's contribution while documenting all team roles.
 
-## What works without a backend
-
-- An interactive model architecture inspector with four residual stages.
-- A **live Quinsh equation graph** with four editable parameters (γ, δ, α, w), presets, and output/derivative views against ReLU and Swish.
-- A five-component explorer that credits each team member.
-- Reported CIFAR-10 metrics (91.45% vs 89.90% accuracy; ~3.4M vs ~11.2M parameters; 17m17s vs 24m training time).
-- An **optional** client-side ONNX Runtime Web inference panel with image uploads and CIFAR-10 predictions once a **compatible trained ONNX checkpoint** is supplied.
-
-> **Evidence boundary:** No ablation study is included. The reported performance belongs to the **combined group model**, not to Quinsh in isolation. The interactive curves are illustrative mathematical plots, not learned weights. **There are no generated/fabricated classification results.**
-
-## Deploy to Hugging Face Spaces — free static Space
-
-1. Create a new Hugging Face **Space** and choose **Static** as the SDK (not Docker or Gradio).
-2. Upload `index.html`, `styles.css`, `app.js`, `README.md`, and the entire `assets` folder, keeping the paths exactly as in this ZIP.
-3. Commit changes. The `README.md` YAML header sets `sdk: static` and `app_file: index.html`.
-4. Open the Space website. All educational controls work instantly and do **not** require server inference.
-
-> If your Space UI does not offer Static as a creation option, create the Space with a README that contains the YAML header above or change the YAML via the Files tab, then add the files.
-
-## Deploy to Render — free static site
-
-1. Push these demo files into a **new GitHub repository** or a dedicated `resucn-demo/` subfolder of an existing repository.
-2. Render Dashboard → **New** → **Static Site** → connect the repository.
-3. Enter:
-
-   | Setting | Value |
-   |---|---|
-   | Name | `resucn-research-lab` (or any available name) |
-   | Root Directory | Leave empty if files are at the repository root; otherwise use the subfolder |
-   | Build Command | `echo "Static site — no build"` |
-   | Publish Directory | `.` |
-
-4. Deploy. Alternatively, `render.yaml` defines a Render static-site blueprint for files in the root.
-
-No API service, CPU container, Python dependencies, Docker image, or server is needed for these two static deployments.
+> **No ONNX, `.pt` checkpoint, server, fabricated predictions, classifier results or ablation experiments are included in the interactive gallery.** Gallery icons and illustrated input examples are conceptual, not samples from the original CIFAR-10 dataset. Standard CIFAR-10 dataset cardinalities/label names are general dataset specifications; original project metrics are sourced from slide 22 of the group presentation.
 
 ## Run locally
 
-Open `index.html` in a modern browser for the architecture, module cards, results, and Quinsh Studio. For the optional ONNX inference runner, serve the folder locally for best browser compatibility:
+Option A: open `index.html` directly in Chrome/Edge/Firefox. All interactive features work without a build process. The Google Fonts stylesheet is an optional online dependency; fallback system fonts are provided.
+
+Option B: for convenient development in PowerShell:
 
 ```powershell
-cd path\to\resucn-demo
+cd path\to\resucn-cifar-research-showcase
 python -m http.server 8080
 ```
 
-Visit `http://localhost:8080`.
+Then visit http://localhost:8080. No `pip install`, Docker, ML weights or Python server backend is needed for deployed versions.
 
-## Enable optional real inference
+## Deploy to Hugging Face Spaces (Static SDK)
 
-The GitHub repository publishes a Jupyter notebook but does **not** currently publish a verified trained ONNX checkpoint. This ZIP intentionally does **not** contain a simulated classifier.
+1. Create a Hugging Face Space using the **Static** SDK, **not Docker or Gradio**.
+2. Upload `index.html`, `styles.css`, `app.js`, `README.md`, `assets/favicon.svg`, `docs/SOURCE_NOTES.md`, `LICENSE` with the same folder structure.
+3. Commit. YAML front matter at the top of this `README.md` selects `sdk: static` and `app_file: index.html`.
+4. Visit the deployed Space and verify that class filters, preprocessing controls and Quinsh plot respond.
 
-1. In the original Res_UCN training notebook, recreate the trained model architecture and **load the actual best-validation checkpoint** (e.g., the saved `.pt` file). Confirm the code and weights match and the model produces 10 CIFAR-10 logits.
-2. With your model object (`model`) loaded in memory in eval mode, run this extra notebook cell:
+## Deploy to Render (Static Site)
 
-   ```python
-   import torch
-   model.eval()
-   dummy = torch.randn(1, 3, 32, 32, device=next(model.parameters()).device)
-   torch.onnx.export(
-       model, dummy, 'res_ucn_cifar10.onnx',
-       export_params=True, opset_version=17,
-       input_names=['image'], output_names=['logits'],
-       dynamic_axes={'image': {0: 'batch'}, 'logits': {0: 'batch'}},
-       dynamo=False,
-   )
-   ```
+1. Push the website files to a GitHub repository (prefer a new `resucn-research-lab` repo, or place them inside a dedicated folder).
+2. In Render select **New → Static Site**, then connect that repository.
+3. Use these settings:
 
-   This assumes you already have the model object from the notebook. It does not create weights or retrain anything. **Export can fail on unsupported custom operations** and must be verified against the PyTorch output on real examples. Install `onnx` if required.
-3. In the website's **Model Runner**, choose the ONNX file from your computer, then choose a picture. The website loads ONNX Runtime Web on demand, preprocesses images to `[1,3,32,32]` using the slide's mean/std (mean `[.49,.48,.44]`, std `[.20,.19,.20]`), and executes inference **locally in the browser**.
-4. **Verify outputs** by comparing several examples with the notebook's original PyTorch predictions. Label/order is the standard CIFAR-10 class order: `airplane, automobile, bird, cat, deer, dog, frog, horse, ship, truck`. If your notebook used a different mapping, update `CIFAR10` in `app.js`.
+   | Setting | Value |
+   |---|---|
+   | Service type | Static Site |
+   | Root directory | blank if the website is at repository root; otherwise the relative demo subfolder |
+   | Build command | `echo "Static site - no build"` |
+   | Publish directory | `.` |
 
-**Note:** ONNX Runtime is dynamically retrieved from a public CDN only when Run is clicked. An Internet connection is needed for the ONNX runtime on first use. WebGL/WebGPU is **not** required; WASM is used. Files stay in the browser; no inference requests are sent to a server. For large checkpoints, inference may be slow on phones.
+4. Deploy. The provided `render.yaml` is an optional Blueprint alternative when the site lives at the repository root.
 
-## How we handle evidence and attribution
+Both hosts serve exactly the same files, with **no inference API, backend, Docker, ONNX or model checkpoint**.
 
-Sources:
-- *AIT301 Group 2 — Final Project Slide* (2025), pages 2–3, 12–14, 20–24.
-- [Res_UCN GitHub repository and notebook](https://github.com/WAYTECHG/Res_UCN-Resnet-Unified-Convolution-Network).
+## Factual basis and research limits
 
-Group roles from the presentation:
+| Claim | Source |
+|---|---|
+| Group roles and Wilbert's Quinsh contribution | Group presentation slide 2 |
+| ADSGC, CIAC, WBN, Quinsh, DE-Stopping architecture | Slides 3–20 and 23 |
+| `Q(x) = γ(x − δ) σ(w(x − δ)) + αx` | Slide 14 |
+| Random crop, flip, color jitter (training); normalize (test); RGB mean/std | Slide 21 |
+| 89.90% vs 91.45% accuracy, parameters, training time, epoch | Slide 22 |
+| 50,000/10,000 images, 10 standard categories, balanced labels, 32×32 RGB | Standard CIFAR-10 dataset specification, not experimental measurements |
 
-| Research contribution | Contributor |
+The interactive preprocessing lab **does not claim** that a brightness slider exactly reproduces the original stochastic ColorJitter settings. It demonstrates resizing to 32×32, a horizontal flip, relative brightness and per-channel normalization from a user-selected pixel. The class explorer shows label information, not ground-truth photos or inferred predictions. **No ablation studies are claimed** and the aggregate group metrics do not measure Quinsh separately.
+
+## Source and contributions
+
+| Component | Contributor |
 |---|---|
 | Adaptive Dynamic-Scale Gated Convolution (ADSGC) | Derol Chong Chun Kit |
 | Channel Importance Assignment Convolution (CIAC) | Edward Ooi Wee Xue |
-| Weighted Batch Normalization | Wang XinYi |
-| **Quinsh activation** | **Wilbert Andrew Yonathan** |
-| Energy–Entropy Stopping | Chua Kian Hoong |
+| Weighted BatchNorm (WBN) | Wang XinYi |
+| **Quinsh activation function** | **Wilbert Andrew Yonathan** |
+| Energy–Entropy stopping (DE-Stopping) | Chua Kian Hoong |
 | Data preprocessing and residual block integration | Siah Jie Sheng |
-
-**Important:** Features such as parameter presets, gradient plotting, static UI layouts and module visualizations are explanatory *website* functionality; they are not reported novel experiments, learned parameter estimates or ablation studies.
 
 ## Project structure
 
 ```text
-resucn-demo/
-├── index.html          # entire static application
-├── styles.css          # responsive dark research-lab design
-├── app.js              # charts, modules, nav, optional ONNX runner
-├── README.md           # documentation and Hugging Face static metadata
-├── render.yaml         # optional Render static-site Blueprint
+resucn-cifar-research-showcase/
+├── index.html
+├── styles.css
+├── app.js
+├── README.md
+├── render.yaml
+├── LICENSE
 ├── assets/
 │   └── favicon.svg
 └── docs/
     └── SOURCE_NOTES.md
 ```
 
-## Licence
+## License
 
-Demo application is provided under the MIT License. Original research and notebook: see [upstream repository](https://github.com/WAYTECHG/Res_UCN-Resnet-Unified-Convolution-Network) for project attribution and licensing.
+MIT for this static website. The group's original code, model and research remain attributed to their respective contributors; see the source GitHub repository.
